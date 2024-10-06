@@ -37,7 +37,7 @@ const connection = mysql.createConnection({
 
 //Inserting new data
 // let q = "INSERT INTO user (id, username, email, password) VALUES ?";
-let data = [];
+// let data = [];
 // for(let i =1; i<=100; i++){
 //   data.push(getRandomUser());
 // }
@@ -131,6 +131,24 @@ app.patch("/user/:id",(req,res)=>{
   }
 });
 
+//create new User
+app.get("/user/newUser",(req,res)=>{
+  res.render("newUser.ejs");
+});
+
+app.post("/user/newUser",(req,res)=>{
+  let { id, username, email, password} = req.body;
+  let q = "INSERT INTO user (id, username, email, password) VALUES (?,?,?,?)";
+  try{
+    connection.query(q, [id, username, email, password],(err,result)=>{
+      if(err) throw err;
+      res.redirect("/user");
+    });
+  }catch(err){
+    console.log("some error");
+    res.send("Some error occured at the post route of user");
+  }
+});
 
 //edit route
 // app.get("/user/:id/edit",(req,res)=>{
