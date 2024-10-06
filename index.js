@@ -1,13 +1,17 @@
 const express = require("express")
 const app = express();
-
+const methodOverride = require("method-override");
 const port = 8080;
 
 const path = require("path");
 
 app.set("view engine","ejs");
+app.use(methodOverride("_method"))
 
 app.set("views",path.join(__dirname,"/views"));
+app.use("/css", express.static(path.join(__dirname, "/path/css")));
+
+
 
 const { faker } = require('@faker-js/faker');
 const mysql = require("mysql2");
@@ -20,14 +24,14 @@ const connection = mysql.createConnection({
   password: "rohit1234singh"
 });
 
-let getRandomUser = ()=> {
-  return [
-    faker.string.uuid(),
-    faker.internet.userName(),
-    faker.internet.email(),
-    faker.internet.password(),
-  ];
-};
+// let getRandomUser = ()=> {
+//   return [
+//     faker.string.uuid(),
+//     faker.internet.userName(),
+//     faker.internet.email(),
+//     faker.internet.password(),
+//   ];
+// };
 
 //Inserting new data
 // let q = "INSERT INTO user (id, username, email, password) VALUES ?";
@@ -80,6 +84,46 @@ app.get("/user",(req,res)=>{
       res.send("Some error in DB");
     }
 });
+
+//Edit route
+app.get("/user/:id/edit",(req,res)=>{
+  let { id } = req.params;
+  let q = `SELECT * FROM user WHERE id = "${id}"`;
+
+  try{
+    connection.query(q,(err, result)=>{
+      if(err)
+        throw err;
+      let user = result[0];
+      res.render("edit.ejs",{ user });
+    })
+  }catch(err){
+    console.log(err);
+    res.send("Some error occured at edit route");
+  }
+  
+})
+
+//Update Route
+app.patch("/user/:id",(req,res)=>{
+  res.send("Updated value")
+});
+
+//edit route
+// app.get("/user/:id/edit",(req,res)=>{
+//   let { id } = req.params;
+//   let q = `Select * FROM user WHERE id = ${id}`
+//   try{
+//     connection.query(q, (err,update)=>{
+//       if(err)
+//         throw err;
+//       res.render("edit.ejs", { update })
+//     });
+//   }catch(err){
+//     console.log(err);
+//     res.send("Some error occured while displaying info of the user")
+//   }
+// })
 
 
 app.listen(port,()=>{

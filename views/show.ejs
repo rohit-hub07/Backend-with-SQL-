@@ -4,11 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Show Route</title>
-  <style>
-    table, tr, td, th{
-      border: 1px solid black;
-    }
-  </style>
+  <link rel="stylesheet" href="/css/style.css"/>
 </head>
 <body>
   <table>
@@ -24,6 +20,9 @@
         <td><%=user.username%></td>
         <td><%=user.email%></td>
         <td><%=user.password%></td>
+        <td><form method="GET" action="/user/<%= user.id%>/edit">
+          <button>Edit Username</button>
+        </form></td>
     </tr>
     <%}%>
   </table>
