@@ -6,7 +6,9 @@ const port = 8080;
 const path = require("path");
 
 app.set("view engine","ejs");
+
 app.use(methodOverride("_method"))
+app.use(express.urlencoded({ extended: true}));
 
 app.set("views",path.join(__dirname,"/views"));
 app.use("/css", express.static(path.join(__dirname, "/path/css")));
@@ -106,8 +108,29 @@ app.get("/user/:id/edit",(req,res)=>{
 
 //Update Route
 app.patch("/user/:id",(req,res)=>{
-  res.send("Updated value")
+  let { id } = req.params;
+  let { password: formPass, username: newUsername} = req.body;
+  let q = `SELECT * FROM user WHERE id = "${id}"`;
+  try{
+    connection.query(q,(err,result)=>{
+      if(err) throw err;
+      let user = result[0];
+      if(formPass != user.password){
+        res.send("Password incorrect!");
+      }else{
+        let q2 = `UPDATE user SET username='${newUsername}' WHERE id = '${id}'`
+        connection.query(q2,(err,result)=>{
+          if(err) throw err;
+          res.redirect("/user");
+        })
+      }
+    })
+  }catch(err){
+    console.log(err);
+    res.send("some error occured in the update route");
+  }
 });
+
 
 //edit route
 // app.get("/user/:id/edit",(req,res)=>{
