@@ -150,6 +150,22 @@ app.post("/user/newUser",(req,res)=>{
   }
 });
 
+//DELETE route
+
+app.delete("/user/:id/delete",(req,res)=>{
+  let { id } = req.params;
+  let q = `DELETE FROM user WHERE id = "${id}"`;
+  try{
+    connection.query(q,(err,result)=>{
+    if(err) throw err;
+    res.redirect("/user");
+    })
+  }catch(err){
+    console.log(err);
+    res.send("Error in the delete route")
+  }
+})
+
 //edit route
 // app.get("/user/:id/edit",(req,res)=>{
 //   let { id } = req.params;
